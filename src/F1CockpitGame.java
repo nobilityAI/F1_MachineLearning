@@ -24,6 +24,7 @@ public class F1CockpitGame extends Application {
     private double carY = HEIGHT / 8;
     private double accelerator = 0.015;
     private double turnFriction = 0.01;
+    private double friction = 0.005;
     private double brake = 0.03;
     private double speed = 0;
     private double carAngle = 90;
@@ -71,7 +72,7 @@ public void handle(long now) {
     }
 
     double radians = Math.toRadians(carAngle);
-
+    if(speed>0){speed -= friction;}
     carX += speed * Math.sin(radians); 
     carY -= speed * Math.cos(radians);
 
