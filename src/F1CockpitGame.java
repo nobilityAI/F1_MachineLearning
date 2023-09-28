@@ -20,9 +20,9 @@ public class F1CockpitGame extends Application {
     private static final double WIDTH = 1500;
     private static final double HEIGHT = 1000;
     private Image carImage;
-    private double carX = WIDTH / 7;
-    private double carY = HEIGHT / 7;
-    private double accelerator = 0.02;
+    private double carX = WIDTH / 8;
+    private double carY = HEIGHT / 8;
+    private double accelerator = 0.015;
     private double turnFriction = 0.01;
     private double brake = 0.03;
     private double speed = 0;
@@ -87,61 +87,78 @@ public void handle(long now) {
         primaryStage.show();
     }
 
+    private void drawDiagonalTrack(GraphicsContext gc, double baseX, double baseY, double length, double angle, double trackWidth) {
+        // Calculate the end coordinates for the diagonal line segment
+        double endX = baseX + length * Math.cos(Math.toRadians(angle));
+        double endY = baseY + length * Math.sin(Math.toRadians(angle));
+    
+        // Calculate the offsets for the track width
+        double offsetX = trackWidth * Math.sin(Math.toRadians(angle));
+        double offsetY = trackWidth * Math.cos(Math.toRadians(angle));
+    
+        // Draw the track using the calculated coordinates
+        gc.fillPolygon(
+            new double[] {baseX, endX, endX + offsetX, baseX + offsetX},
+            new double[] {baseY, endY, endY - offsetY, baseY - offsetY},
+            4
+        );
+    }
+    
+    private void track(GraphicsContext gc){
+        //fillArc(double x, double y, double w, double h, double startAngle, double arcExtent, ArcType closure)
+        //fillRect(double x, double y, double width, double height)
+        //background
+        gc.setFill(Color.GREEN);
+        gc.fillRect(0, 0, WIDTH, HEIGHT);
+        gc.setFill(Color.BLACK);
+
+        gc.fillRect(100, 100, 1200, 100);                              //first straightaway
+        gc.fillArc(1200, 100, 200, 200, 0, 90, ArcType.ROUND);         //first curve
+
+        gc.fillRect(1300,200, 100, 700);                               //second straight away
+        gc.fillArc(1150, 800, 250, 200, 180, 180, ArcType.ROUND);      //second curve
+
+        gc.fillRect(1150, 350, 100, 550);                              // third staraightaway
+        gc.fillArc(1050, 250, 200, 200, 0, 135, ArcType.ROUND);         //third curve (120 degrees)
+
+        drawDiagonalTrack(gc, 1080, 279, 700, 135, 100); //diagnol straightaway
+        gc.fillArc(485, 673, 200, 200, 270, 45,ArcType.ROUND);          //diagnol curve
+
+        gc.fillRect(100, 773, 485, 100);                                  //fourth straightaway
+        gc.fillArc(0, 673, 200, 200, 180, 90, ArcType.ROUND);              //fourth arc
+
+        gc.fillRect(0, 200, 100, 573);                                  //final straightaway
+        gc.fillArc(0, 100, 200, 200, 90, 90, ArcType.ROUND);            //final arc
+
+        gc.setStroke(Color.WHITE); // Set line color to black
+        gc.setLineWidth(1);
+        for(int i=0;i<1500;i+=100)
+        {
+            gc.strokeLine(0, i, 1500, i);
+        }
+        for(int i=0;i<1500;i+=100)
+        {
+            gc.strokeLine(i,0,i,1000);
+        }
+
+        
+    
+    }
     private void draw(GraphicsContext gc) {
         // Clear the canvas
         gc.clearRect(0, 0, WIDTH, HEIGHT);
-
         gc.setFill(Color.GRAY);
         gc.fillRect(0, 0, WIDTH, HEIGHT);
         gc.save();
         gc.setFill(Color.GREEN);
         // You can draw the borders and other elements of your track here
-         gc.setFill(Color.GREEN);
-    gc.fillRect(0, 0, WIDTH, HEIGHT);
-
-    // Draw the straight track (For instance)
-    gc.setFill(Color.BLACK);
-    gc.fillRect(200, 200, 200, 400);
-
-    // Draw a simple curve (for instance)
-    gc.fillArc(400, 400, 200, 200, 90, 90, ArcType.ROUND);
-
-    // Draw red and white striped borders (just for the straight track as an example)
-    for (int i = 0; i < 400; i += 20) {
-        gc.setFill(i % 40 == 0 ? Color.RED : Color.WHITE);
-        gc.fillRect(190, 200 + i, 10, 20); // left border
-        gc.fillRect(400, 200 + i, 10, 20); // right border
-    }
+        track(gc);
         gc.translate(carX + carImage.getWidth() / 2, carY + carImage.getHeight() / 2); // Move to the center of the image
         gc.rotate(carAngle);
         gc.drawImage(carImage, -carImage.getWidth() / 2, -carImage.getHeight() / 2); // Draw the image centered at its pivot
-    
         gc.restore(); // Restore the transformation matrix to its previous state
-        for (int i = 0; i < 400; i += 20) {
-            gc.setFill(i % 40 == 0 ? Color.RED : Color.WHITE);
-            gc.fillRect(190, 200 + i, 10, 20); // left border
-            gc.fillRect(400, 200 + i, 10, 20); // right border
-        }
-    
-        // Reset logic (basic example for the straight track)
-        if (carX > 190 && carX < 410 && carY > 200 && carY < 600) {
-            // Car is on the straight track
-            if (carX < 200 || carX > 400) {
-                resetGame(); // If it's on the border area, reset
-            }
-        }
-        // You will need to add similar checks for curves and other parts of the track.
-    
-        // ... Rest of the car drawing code
+ 
     }
-    
-    private void resetGame() {
-        carX = WIDTH / 7;
-        carY = HEIGHT / 7;
-        carAngle = 90;
-        speed = 0;
-    }
-    }
-    
 
 
+}
