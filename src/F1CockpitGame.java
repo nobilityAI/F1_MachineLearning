@@ -20,12 +20,15 @@ import java.util.Set;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Arc;
+import javafx.scene.shape.Line;
+import javafx.scene.control.Label; //delete 
 
 public class F1CockpitGame extends Application {
     DecimalFormat df = new DecimalFormat("#.00");
     Set<KeyCode> activeKeys = new HashSet<>();
     private static final double WIDTH = 1500;
     private static final double HEIGHT = 1000;
+    private Label coordinatesLabel = new Label(); //delete
     private Image carImage;
     private double carX = WIDTH / 8;
     private double carY = HEIGHT / 8;
@@ -54,13 +57,10 @@ public class F1CockpitGame extends Application {
         primaryStage.setScene(scene);
         scene.setOnKeyPressed(e -> activeKeys.add(e.getCode()));
         scene.setOnKeyReleased(e -> activeKeys.remove(e.getCode()));
+
         AnimationTimer timer = new AnimationTimer() {
-            // ... (keep the previous part of the code unchanged)
             private void handleCollision() {
-                // Logic for what to do when the car hits the border
-                // For example:
-                System.out.println("Collision Detected"); // Stop the car
-                // TODO: Add other logic/actions as required
+                System.out.println("Collision Detected");
             }
 
             @Override
@@ -90,6 +90,7 @@ public class F1CockpitGame extends Application {
                 if (isCarCollidingWithBorders()) {
                     handleCollision();
                 }
+
                 double radians = Math.toRadians(carAngle);
                 if (speed > 0) {
                     speed -= friction;
@@ -107,6 +108,16 @@ public class F1CockpitGame extends Application {
         primaryStage.show();
         draw(gc);
         primaryStage.show();
+
+        coordinatesLabel.setLayoutX(750); //delete 
+        coordinatesLabel.setLayoutY(150);
+        root.getChildren().add(coordinatesLabel);
+        scene.setOnMouseMoved(event -> {
+            double x = event.getX();
+            double y = event.getY();
+            coordinatesLabel.setText("X: " + (int) x + ", Y: " + (int) y); // Cast to int to avoid decimal values
+        });
+        
     }
 
     private void drawDiagonalTrack(GraphicsContext gc, double baseX, double baseY, double length, double angle,
@@ -132,13 +143,13 @@ public class F1CockpitGame extends Application {
                     endX, endY,
                     endX + offsetX, endY - offsetY,
                     baseX + offsetX, baseY - offsetY);
-            diagonal.setFill(Color.TRANSPARENT); // Border is invisible
+            diagonal.setFill(Color.TRANSPARENT); 
             trackBorders.add(diagonal);
         }
     }
 
     private void initializeTrackBorders(GraphicsContext gc) {
-        // Straightaways
+        // Straightaway Borders
         trackBorders.add(new Rectangle(100, 95, 1200, 5));
         trackBorders.add(new Rectangle(100, 200, 1200, 5));
 
@@ -153,21 +164,60 @@ public class F1CockpitGame extends Application {
 
         trackBorders.add(new Rectangle(0, 200, 5, 573));
         trackBorders.add(new Rectangle(100, 200, 5, 573));
+        // Arc Borders using Lines - issue with arc borders(would fill entire arc)
+        trackBorders.add(new Line(1300, 100, 1375, 125));
+        trackBorders.add(new Line(1390, 125, 1400, 200));
+        trackBorders.add(new Line(1400, 935, 1315, 995));
+        trackBorders.add(new Line(1225, 995, 1315, 995));
+        trackBorders.add(new Line(1155, 945, 1225, 995));
+        trackBorders.add(new Line(1150, 900, 1155, 945));
+        trackBorders.add(new Line(1250, 350, 1250, 293));
+        trackBorders.add(new Line(1250, 293, 1220, 260));
+        trackBorders.add(new Line(1220, 260, 1155, 240));
+        trackBorders.add(new Line(1155, 240, 1105, 250));
+        trackBorders.add(new Line(652, 847, 627, 869));
+        trackBorders.add(new Line(627, 869, 583, 873));
+        trackBorders.add(new Line(98, 880, 30, 859));
+        trackBorders.add(new Line(30, 859, 0, 796));
+        trackBorders.add(new Line(0, 796, 0, 773));
+        trackBorders.add(new Line(0, 200, 0, 155));
+        trackBorders.add(new Line(23, 125, 0, 155));
+        trackBorders.add(new Line(23, 125, 72, 98));
+        trackBorders.add(new Line(72, 98, 100, 95));
+        trackBorders.add(new Line(1405, 900, 1405, 935));
+        trackBorders.add(new Line(1105, 250, 1085, 275));
 
+        //Arc Border Drawings - No collision detection
         Arc arc1 = new Arc(1300, 200, 102.5, 102.5, 0, 90);
         arc1.setType(ArcType.OPEN);
         trackBorders.add(arc1);
-//Arc(double centerX, double centerY, double radiusX, double radiusY, double startAngle, double length)
+        // Arc(double centerX, double centerY, double radiusX, double radiusY, double startAngle, double length)
 
-       Arc arc2 = new Arc(1150,800,250,200,180,180);
-       arc2.setType(ArcType.OPEN);
-       trackBorders.add(arc2);
-// gc.fillArc(1150, 800, 250, 200, 180, 180, ArcType.ROUND);
+        Arc arc2 = new Arc(1275, 895, 127.5, 102.5, 180, 180);
+        arc2.setType(ArcType.OPEN);
+        trackBorders.add(arc2);
+
+        Arc arc3 = new Arc(1151, 350, 101, 102.5, 0, 135);
+        arc3.setType(ArcType.OPEN);
+        trackBorders.add(arc3);
+
+        Arc arc4 = new Arc(585,767,102.5,105,270,45);  
+        arc4.setType(ArcType.OPEN);
+        trackBorders.add(arc4);
+
+        Arc arc5 = new Arc(104,770,102.5,102.5,180,90);
+        arc5.setType(ArcType.OPEN);
+        trackBorders.add(arc5);
+
+        Arc arc6 = new Arc(100,200,98,102.5,90,90);
+        arc6.setType(ArcType.OPEN);
+        trackBorders.add(arc6);
+
         drawDiagonalTrack(gc, 1077, 276, 699, 135, 5, true);
         drawDiagonalTrack(gc, 1145, 350, 699, 135, 5, true);
 
         for (Shape border : trackBorders) {
-            border.setFill(Color.WHITE); 
+            border.setFill(Color.WHITE);
         }
     }
 
@@ -175,54 +225,43 @@ public class F1CockpitGame extends Application {
         double carCenterX = carX + carImage.getWidth() / 2;
         double carCenterY = carY + carImage.getHeight() / 2;
 
-        Circle carCenter = new Circle(carCenterX, carCenterY, 5); // 5 is a small radius to represent the car's center
+        Circle carCenter = new Circle(carCenterX, carCenterY, 5); // Last int represents radius of cars detection from its center point
 
         for (Shape border : trackBorders) {
-            if (Shape.intersect(carCenter, border).getBoundsInLocal().getWidth() != -1) {
+            if (!(border instanceof Arc) && Shape.intersect(carCenter, border).getBoundsInLocal().getWidth() != -1) {
                 return true;
             }
         }
         return false;
     }
 
-    private void track(GraphicsContext gc) {
+    private void track(GraphicsContext gc) { //draws the track (no borders)
         // background
         gc.setFill(Color.GREEN);
         gc.fillRect(0, 0, WIDTH, HEIGHT);
         gc.setFill(Color.GRAY);
 
-        gc.fillRect(100, 100, 1200, 100); // first straightaway
-        gc.fillArc(1200, 100, 200, 200, 0, 90, ArcType.ROUND); // first curve
+        gc.fillRect(100, 100, 1200, 100);                           // Straightaway #1
+        gc.fillArc(1200, 100, 200, 200, 0, 90, ArcType.ROUND);      // Curve #1
 
-        gc.fillRect(1300, 200, 100, 700); // second straight away
-        gc.fillArc(1150, 800, 250, 200, 180, 180, ArcType.ROUND); // second curve
+        gc.fillRect(1300, 200, 100, 700);                           // Straightaway #2
+        gc.fillArc(1150, 800, 250, 200, 180, 180, ArcType.ROUND);   // Curve #2 
 
-        gc.fillRect(1150, 350, 100, 550); // third staraightaway
-        gc.fillArc(1050, 250, 200, 200, 0, 135, ArcType.ROUND); // third curve (120 degrees)
+        gc.fillRect(1150, 350, 100, 550);                           // Straightaway #3
+        gc.fillArc(1050, 250, 200, 200, 0, 135, ArcType.ROUND);     // Curve #3 
 
-        drawDiagonalTrack(gc, 1080, 279, 700, 135, 100, false); // diagnol straightaway
+        drawDiagonalTrack(gc, 1080, 279, 700, 135, 100, false); //Straightaway #4
+        gc.fillArc(485, 673, 200, 200, 270, 45, ArcType.ROUND);     // Curve #4
 
-        gc.fillArc(485, 673, 200, 200, 270, 45, ArcType.ROUND); // diagnol curve
+        gc.fillRect(100, 773, 485, 100);                            // Straightaway #5
+        gc.fillArc(0, 673, 200, 200, 180, 90, ArcType.ROUND);       // Curve #5
 
-        gc.fillRect(100, 773, 485, 100); // fourth straightaway
-        gc.fillArc(0, 673, 200, 200, 180, 90, ArcType.ROUND); // fourth arc
-
-        gc.fillRect(0, 200, 100, 573); // final straightaway
-        gc.fillArc(0, 100, 200, 200, 90, 90, ArcType.ROUND); // final arc
-
-        gc.setStroke(Color.WHITE); // Set line color to black
-        gc.setLineWidth(1);
-       // for (int i = 0; i < 1500; i += 100) {
-       // gc.strokeLine(0, i, 1500, i);
-       //  }
-       // for (int i = 0; i < 1500; i += 100) {
-       // gc.strokeLine(i, 0, i, 1000);
-      //   }
-
+        gc.fillRect(0, 200, 100, 573);                              // Straightaway #6
+        gc.fillArc(0, 100, 200, 200, 90, 90, ArcType.ROUND);        // Curve #6
     }
 
     private void dataOnScreen(GraphicsContext gc) {
-        //Speed Bar
+        // Speed Bar
         gc.setFill(Color.BLACK);
         gc.fillRect(198, 298, 204, 24);
         gc.setFill(Color.GREEN);
@@ -245,7 +284,7 @@ public class F1CockpitGame extends Application {
         gc.setFill(Color.GREEN);
         track(gc);
         dataOnScreen(gc);
-        //For drawing the borders:::Source - ChatGPT
+        // For drawing the borders:::Source - ChatGPT
         for (Shape border : trackBorders) {
             gc.setStroke(Color.WHITE);
             gc.setLineWidth(5);
@@ -267,13 +306,14 @@ public class F1CockpitGame extends Application {
                         arc.getRadiusX() * 2, arc.getRadiusY() * 2, arc.getStartAngle(), arc.getLength(), ArcType.OPEN);
             }
 
-        }        //End of Source
-        //For turning car image::::Source - ChatGPT
-        gc.translate(carX + carImage.getWidth() / 2, carY + carImage.getHeight() / 2); 
+        } // End of Source
+
+        // For turning car image::::Source - ChatGPT
+        gc.translate(carX + carImage.getWidth() / 2, carY + carImage.getHeight() / 2);
         gc.rotate(carAngle);
-        gc.drawImage(carImage, -carImage.getWidth() / 2, -carImage.getHeight() / 2); 
-        gc.restore(); 
-        //End of Source
+        gc.drawImage(carImage, -carImage.getWidth() / 2, -carImage.getHeight() / 2);
+        gc.restore();
+        // End of Source
 
     }
 
