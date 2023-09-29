@@ -28,7 +28,7 @@ public class F1CockpitGame extends Application {
     Set<KeyCode> activeKeys = new HashSet<>();
     private static final double WIDTH = 1500;
     private static final double HEIGHT = 1000;
-    private Label coordinatesLabel = new Label(); //delete
+    private Label coordinatesLabel = new Label(); // delete
     private Image carImage;
     private double carX = WIDTH / 8;
     private double carY = HEIGHT / 8;
@@ -39,6 +39,7 @@ public class F1CockpitGame extends Application {
     private double speed = 0;
     private double carAngle = 90;
     private List<Shape> trackBorders = new ArrayList<>();
+    private List<Shape> checkPoints = new ArrayList<>();
 
     public static void main(String[] args) {
         launch(args);
@@ -109,7 +110,7 @@ public class F1CockpitGame extends Application {
         draw(gc);
         primaryStage.show();
 
-        coordinatesLabel.setLayoutX(750); //delete 
+        coordinatesLabel.setLayoutX(750); // delete
         coordinatesLabel.setLayoutY(150);
         root.getChildren().add(coordinatesLabel);
         scene.setOnMouseMoved(event -> {
@@ -117,9 +118,22 @@ public class F1CockpitGame extends Application {
             double y = event.getY();
             coordinatesLabel.setText("X: " + (int) x + ", Y: " + (int) y); // Cast to int to avoid decimal values
         });
-        
     }
 
+    private boolean isCarCollidingWithBorders() {
+        double carCenterX = carX + carImage.getWidth() / 2;
+        double carCenterY = carY + carImage.getHeight() / 2;
+
+        Circle carCenter = new Circle(carCenterX, carCenterY, 5); // Last int represents radius of cars detection from
+                                                                  // its center point
+
+        for (Shape border : trackBorders) {
+            if (!(border instanceof Arc) && Shape.intersect(carCenter, border).getBoundsInLocal().getWidth() != -1) {
+                return true;
+            }
+        }
+        return false;
+    }
     private void drawDiagonalTrack(GraphicsContext gc, double baseX, double baseY, double length, double angle,
             double trackWidth, boolean isBorder) {
         // Calculate the end coordinates for the diagonal line segment
@@ -143,7 +157,7 @@ public class F1CockpitGame extends Application {
                     endX, endY,
                     endX + offsetX, endY - offsetY,
                     baseX + offsetX, baseY - offsetY);
-            diagonal.setFill(Color.TRANSPARENT); 
+            diagonal.setFill(Color.TRANSPARENT);
             trackBorders.add(diagonal);
         }
     }
@@ -186,12 +200,14 @@ public class F1CockpitGame extends Application {
         trackBorders.add(new Line(72, 98, 100, 95));
         trackBorders.add(new Line(1405, 900, 1405, 935));
         trackBorders.add(new Line(1105, 250, 1085, 275));
+        trackBorders.add(new Line(1255,895,1295,895));
 
-        //Arc Border Drawings - No collision detection
+        // Arc Border Drawings - No collision detection
         Arc arc1 = new Arc(1300, 200, 102.5, 102.5, 0, 90);
         arc1.setType(ArcType.OPEN);
         trackBorders.add(arc1);
-        // Arc(double centerX, double centerY, double radiusX, double radiusY, double startAngle, double length)
+        // Arc(double centerX, double centerY, double radiusX, double radiusY, double
+        // startAngle, double length)
 
         Arc arc2 = new Arc(1275, 895, 127.5, 102.5, 180, 180);
         arc2.setType(ArcType.OPEN);
@@ -201,15 +217,15 @@ public class F1CockpitGame extends Application {
         arc3.setType(ArcType.OPEN);
         trackBorders.add(arc3);
 
-        Arc arc4 = new Arc(585,767,102.5,105,270,45);  
+        Arc arc4 = new Arc(585, 767, 102.5, 105, 270, 45);
         arc4.setType(ArcType.OPEN);
         trackBorders.add(arc4);
 
-        Arc arc5 = new Arc(104,770,102.5,102.5,180,90);
+        Arc arc5 = new Arc(104, 770, 102.5, 102.5, 180, 90);
         arc5.setType(ArcType.OPEN);
         trackBorders.add(arc5);
 
-        Arc arc6 = new Arc(100,200,98,102.5,90,90);
+        Arc arc6 = new Arc(100, 200, 98, 102.5, 90, 90);
         arc6.setType(ArcType.OPEN);
         trackBorders.add(arc6);
 
@@ -221,43 +237,44 @@ public class F1CockpitGame extends Application {
         }
     }
 
-    private boolean isCarCollidingWithBorders() {
-        double carCenterX = carX + carImage.getWidth() / 2;
-        double carCenterY = carY + carImage.getHeight() / 2;
-
-        Circle carCenter = new Circle(carCenterX, carCenterY, 5); // Last int represents radius of cars detection from its center point
-
-        for (Shape border : trackBorders) {
-            if (!(border instanceof Arc) && Shape.intersect(carCenter, border).getBoundsInLocal().getWidth() != -1) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void track(GraphicsContext gc) { //draws the track (no borders)
+    private void track(GraphicsContext gc) { // draws the track (no borders)
         // background
         gc.setFill(Color.GREEN);
         gc.fillRect(0, 0, WIDTH, HEIGHT);
         gc.setFill(Color.GRAY);
 
-        gc.fillRect(100, 100, 1200, 100);                           // Straightaway #1
-        gc.fillArc(1200, 100, 200, 200, 0, 90, ArcType.ROUND);      // Curve #1
+        gc.fillRect(100, 100, 1200, 100); // Straightaway #1
+        gc.fillArc(1200, 100, 200, 200, 0, 90, ArcType.ROUND); // Curve #1
 
-        gc.fillRect(1300, 200, 100, 700);                           // Straightaway #2
-        gc.fillArc(1150, 800, 250, 200, 180, 180, ArcType.ROUND);   // Curve #2 
+        gc.fillRect(1300, 200, 100, 700); // Straightaway #2
+        gc.fillArc(1150, 800, 250, 200, 180, 180, ArcType.ROUND); // Curve #2
 
-        gc.fillRect(1150, 350, 100, 550);                           // Straightaway #3
-        gc.fillArc(1050, 250, 200, 200, 0, 135, ArcType.ROUND);     // Curve #3 
+        gc.fillRect(1150, 350, 100, 550); // Straightaway #3
+        gc.fillArc(1050, 250, 200, 200, 0, 135, ArcType.ROUND); // Curve #3
 
-        drawDiagonalTrack(gc, 1080, 279, 700, 135, 100, false); //Straightaway #4
-        gc.fillArc(485, 673, 200, 200, 270, 45, ArcType.ROUND);     // Curve #4
+        drawDiagonalTrack(gc, 1080, 279, 700, 135, 100, false); // Straightaway #4
+        gc.fillArc(485, 673, 200, 200, 270, 45, ArcType.ROUND); // Curve #4
 
-        gc.fillRect(100, 773, 485, 100);                            // Straightaway #5
-        gc.fillArc(0, 673, 200, 200, 180, 90, ArcType.ROUND);       // Curve #5
+        gc.fillRect(100, 773, 485, 100); // Straightaway #5
+        gc.fillArc(0, 673, 200, 200, 180, 90, ArcType.ROUND); // Curve #5
 
-        gc.fillRect(0, 200, 100, 573);                              // Straightaway #6
-        gc.fillArc(0, 100, 200, 200, 90, 90, ArcType.ROUND);        // Curve #6
+        gc.fillRect(0, 200, 100, 573); // Straightaway #6
+        gc.fillArc(0, 100, 200, 200, 90, 90, ArcType.ROUND); // Curve #6
+        
+        gc.setFill(Color.WHITE);
+        gc.fillRect(1255, 895, 40, 5);
+
+        //Starting Line
+        gc.setFill(Color.WHITE);
+        gc.fillRect(230, 95, 20, 110);
+        gc.setFill(Color.BLACK);
+        for(int i=110;i<200;i+=20){
+            gc.fillRect(230,i,10,10);
+        }
+        for(int i=100;i<200;i+=20)
+        {
+            gc.fillRect(240,i,10,10);
+        }
     }
 
     private void dataOnScreen(GraphicsContext gc) {
@@ -269,10 +286,19 @@ public class F1CockpitGame extends Application {
         gc.setFill(Color.CYAN);
         gc.fillRect(200, 300, speed * 40, 20);
         // Speed Display
-        gc.setFont(new Font("Arial", 24));
-        gc.setFill(Color.CYAN);
-        String speedText = "Speed - " + (int) (speed * speed * 10) + " MPH";
-        gc.fillText(speedText, 205, 275);
+        gc.setFont(new Font("Times New Roman", 20));
+        gc.setFill(Color.WHITE);
+        String speedText = "Speed: " + (int) (speed * speed * 10) + " MPH";
+        gc.fillText(speedText, 198, 275);
+        //Car Angle Display
+        String angleText = "Angle: " + (int) ((carAngle+360) % 360);
+        gc.fillText(angleText,198,355);
+        gc.setLineWidth(3);
+        gc.setStroke(Color.CYAN);
+        gc.strokeLine(225,400,35*Math.sin(Math.toRadians((carAngle+360) % 360))+225,-35*Math.cos(Math.toRadians((carAngle+360) % 360))+400);
+        gc.setFill(Color.BLACK);
+        gc.fillOval(220, 395, 10, 10);
+ 
 
     }
 
