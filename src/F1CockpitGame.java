@@ -212,26 +212,26 @@ public class F1CockpitGame extends Application {
 
         gc.setStroke(Color.WHITE); // Set line color to black
         gc.setLineWidth(1);
-        for (int i = 0; i < 1500; i += 100) {
-        gc.strokeLine(0, i, 1500, i);
-         }
-        for (int i = 0; i < 1500; i += 100) {
-        gc.strokeLine(i, 0, i, 1000);
-         }
+       // for (int i = 0; i < 1500; i += 100) {
+       // gc.strokeLine(0, i, 1500, i);
+       //  }
+       // for (int i = 0; i < 1500; i += 100) {
+       // gc.strokeLine(i, 0, i, 1000);
+      //   }
 
     }
 
     private void dataOnScreen(GraphicsContext gc) {
-        // Speed Bar
+        //Speed Bar
         gc.setFill(Color.BLACK);
         gc.fillRect(198, 298, 204, 24);
         gc.setFill(Color.GREEN);
         gc.fillRect(200, 300, 200, 20);
         gc.setFill(Color.CYAN);
         gc.fillRect(200, 300, speed * 40, 20);
-        // Speed
+        // Speed Display
         gc.setFont(new Font("Arial", 24));
-        gc.setFill(Color.WHITE);
+        gc.setFill(Color.CYAN);
         String speedText = "Speed - " + (int) (speed * speed * 10) + " MPH";
         gc.fillText(speedText, 205, 275);
 
