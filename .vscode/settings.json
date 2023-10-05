@@ -3,7 +3,7 @@
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "c:/Applications/javafx-sdk-21/lib/*.jar"
+        "c:/Main/CompSci/Projects/JavaFX/javafx-sdk-21/lib/*.jar" //where javafx is located
     ],
     "java.debug.settings.onBuildFailureProceed": true
 }
