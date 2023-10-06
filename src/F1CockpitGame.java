@@ -38,7 +38,8 @@ public class F1CockpitGame extends Application {
     private double brake = 0.03;
     private double speed = 0;
     private double carAngle = 90;
-    private List<Shape> trackBorders = new ArrayList<>();
+    private List<Shape> trackBordersOuter = new ArrayList<>();
+    private List<Shape> trackBordersInner = new ArrayList<>();
     private List<Shape> checkPoints = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -52,7 +53,7 @@ public class F1CockpitGame extends Application {
         Pane root = new Pane();
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        initializeTrackBorders(gc);
+        initializetrackBordersOuter(gc);
         root.getChildren().add(canvas);
         Scene scene = new Scene(root, WIDTH, HEIGHT);
         primaryStage.setScene(scene);
@@ -127,7 +128,7 @@ public class F1CockpitGame extends Application {
         Circle carCenter = new Circle(carCenterX, carCenterY, 5); // Last int represents radius of cars detection from
                                                                   // its center point
 
-        for (Shape border : trackBorders) {
+        for (Shape border : trackBordersOuter) {
             if (!(border instanceof Arc) && Shape.intersect(carCenter, border).getBoundsInLocal().getWidth() != -1) {
                 return true;
             }
@@ -158,81 +159,86 @@ public class F1CockpitGame extends Application {
                     endX + offsetX, endY - offsetY,
                     baseX + offsetX, baseY - offsetY);
             diagonal.setFill(Color.TRANSPARENT);
-            trackBorders.add(diagonal);
+            trackBordersOuter.add(diagonal);
         }
     }
 
-    private void initializeTrackBorders(GraphicsContext gc) {
+    private void initializetrackBordersOuter(GraphicsContext gc) {
         // Straightaway Borders
-        trackBorders.add(new Rectangle(100, 95, 1200, 5));
-        trackBorders.add(new Rectangle(100, 200, 1200, 5));
+        trackBordersOuter.add(new Rectangle(100, 95, 1200, 5));
+        trackBordersInner.add(new Rectangle(100, 200, 1200, 5));
 
-        trackBorders.add(new Rectangle(1295, 200, 5, 700));
-        trackBorders.add(new Rectangle(1400, 200, 5, 700));
+        trackBordersInner.add(new Rectangle(1295, 200, 5, 700));
+        trackBordersOuter.add(new Rectangle(1400, 200, 5, 700));
 
-        trackBorders.add(new Rectangle(1145, 350, 5, 550));
-        trackBorders.add(new Rectangle(1250, 350, 5, 550));
+        trackBordersOuter.add(new Rectangle(1145, 350, 5, 550));
+        trackBordersInner.add(new Rectangle(1250, 350, 5, 550));
 
-        trackBorders.add(new Rectangle(100, 768, 485, 5));
-        trackBorders.add(new Rectangle(100, 870, 485, 5));
+        trackBordersInner.add(new Rectangle(100, 768, 485, 5));
+        trackBordersOuter.add(new Rectangle(100, 870, 485, 5));
 
-        trackBorders.add(new Rectangle(0, 200, 5, 573));
-        trackBorders.add(new Rectangle(100, 200, 5, 573));
+        trackBordersOuter.add(new Rectangle(0, 200, 5, 573));
+        trackBordersInner.add(new Rectangle(100, 200, 5, 573));
         // Arc Borders using Lines - issue with arc borders(would fill entire arc)
-        trackBorders.add(new Line(1300, 100, 1375, 125));
-        trackBorders.add(new Line(1390, 125, 1400, 200));
-        trackBorders.add(new Line(1400, 935, 1315, 995));
-        trackBorders.add(new Line(1225, 995, 1315, 995));
-        trackBorders.add(new Line(1155, 945, 1225, 995));
-        trackBorders.add(new Line(1150, 900, 1155, 945));
-        trackBorders.add(new Line(1250, 350, 1250, 293));
-        trackBorders.add(new Line(1250, 293, 1220, 260));
-        trackBorders.add(new Line(1220, 260, 1155, 240));
-        trackBorders.add(new Line(1155, 240, 1105, 250));
-        trackBorders.add(new Line(652, 847, 627, 869));
-        trackBorders.add(new Line(627, 869, 583, 873));
-        trackBorders.add(new Line(98, 880, 30, 859));
-        trackBorders.add(new Line(30, 859, 0, 796));
-        trackBorders.add(new Line(0, 796, 0, 773));
-        trackBorders.add(new Line(0, 200, 0, 155));
-        trackBorders.add(new Line(23, 125, 0, 155));
-        trackBorders.add(new Line(23, 125, 72, 98));
-        trackBorders.add(new Line(72, 98, 100, 95));
-        trackBorders.add(new Line(1405, 900, 1405, 935));
-        trackBorders.add(new Line(1105, 250, 1085, 275));
-        trackBorders.add(new Line(1255,895,1295,895));
+        trackBordersOuter.add(new Line(1300, 100, 1350, 110));
+        trackBordersOuter.add(new Line(1350,110,1390,150));
+        trackBordersOuter.add(new Line(1390, 150, 1400, 200));
+
+        trackBordersOuter.add(new Line(1405, 900, 1397, 935));
+        trackBordersOuter.add(new Line(1397,935, 1372, 965));
+        trackBordersOuter.add(new Line(1372,965,1315,995));
+        trackBordersOuter.add(new Line(1225, 995, 1315, 995));
+        trackBordersOuter.add(new Line(1155, 945, 1225, 995));
+        trackBordersOuter.add(new Line(1150, 900, 1155, 945));
+
+        trackBordersInner.add(new Line(1250, 350, 1250, 293));
+        trackBordersInner.add(new Line(1250, 293, 1220, 260));
+        trackBordersInner.add(new Line(1220, 260, 1155, 240));
+        trackBordersInner.add(new Line(1155, 240, 1105, 250));
+
+        trackBordersOuter.add(new Line(652, 847, 627, 869));
+        trackBordersOuter.add(new Line(627, 869, 583, 873));
+        trackBordersOuter.add(new Line(98, 880, 30, 859));
+        trackBordersOuter.add(new Line(30, 859, 0, 796));
+        trackBordersOuter.add(new Line(0, 796, 0, 773));
+        trackBordersOuter.add(new Line(0, 200, 0, 155));
+        trackBordersOuter.add(new Line(23, 125, 0, 155));
+        trackBordersOuter.add(new Line(23, 125, 72, 98));
+        trackBordersOuter.add(new Line(72, 98, 100, 95));
+        trackBordersOuter.add(new Line(1105, 250, 1085, 275));
+        trackBordersOuter.add(new Line(1255,895,1295,895));
 
         // Arc Border Drawings - No collision detection
         Arc arc1 = new Arc(1300, 200, 102.5, 102.5, 0, 90);
         arc1.setType(ArcType.OPEN);
-        trackBorders.add(arc1);
+        trackBordersOuter.add(arc1);
         // Arc(double centerX, double centerY, double radiusX, double radiusY, double
         // startAngle, double length)
 
         Arc arc2 = new Arc(1275, 895, 127.5, 102.5, 180, 180);
         arc2.setType(ArcType.OPEN);
-        trackBorders.add(arc2);
+        trackBordersOuter.add(arc2);
 
         Arc arc3 = new Arc(1151, 350, 101, 102.5, 0, 135);
         arc3.setType(ArcType.OPEN);
-        trackBorders.add(arc3);
+        trackBordersOuter.add(arc3);
 
         Arc arc4 = new Arc(585, 767, 102.5, 105, 270, 45);
         arc4.setType(ArcType.OPEN);
-        trackBorders.add(arc4);
+        trackBordersOuter.add(arc4);
 
         Arc arc5 = new Arc(104, 770, 102.5, 102.5, 180, 90);
         arc5.setType(ArcType.OPEN);
-        trackBorders.add(arc5);
+        trackBordersOuter.add(arc5);
 
         Arc arc6 = new Arc(100, 200, 98, 102.5, 90, 90);
         arc6.setType(ArcType.OPEN);
-        trackBorders.add(arc6);
+        trackBordersOuter.add(arc6);
 
         drawDiagonalTrack(gc, 1077, 276, 699, 135, 5, true);
         drawDiagonalTrack(gc, 1145, 350, 699, 135, 5, true);
 
-        for (Shape border : trackBorders) {
+        for (Shape border : trackBordersOuter) {
             border.setFill(Color.WHITE);
         }
     }
@@ -311,7 +317,7 @@ public class F1CockpitGame extends Application {
         track(gc);
         dataOnScreen(gc);
         // For drawing the borders:::Source - ChatGPT
-        for (Shape border : trackBorders) {
+        for (Shape border : trackBordersOuter) {
             gc.setStroke(Color.WHITE);
             gc.setLineWidth(5);
             gc.setFill((Color) border.getFill());
@@ -330,9 +336,14 @@ public class F1CockpitGame extends Application {
                 Arc arc = (Arc) border;
                 gc.strokeArc(arc.getCenterX() - arc.getRadiusX(), arc.getCenterY() - arc.getRadiusY(),
                         arc.getRadiusX() * 2, arc.getRadiusY() * 2, arc.getStartAngle(), arc.getLength(), ArcType.OPEN);
-            }
+            } else if (border instanceof Line) {
+                Line line = (Line) border;
+                gc.setStroke(Color.RED);
+                gc.setLineWidth(3);
+                gc.strokeLine(line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY());
 
-        } // End of Source
+        }} // End of Source
+        
 
         // For turning car image::::Source - ChatGPT
         gc.translate(carX + carImage.getWidth() / 2, carY + carImage.getHeight() / 2);
